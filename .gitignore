@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# maestri / briefs internos dos agentes
+/.maestri/
+/tasks/

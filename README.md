@@ -1,36 +1,191 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Iuris Mídia — Performance & Automação
 
-## Getting Started
+Site institucional de alta performance para a Iuris Mídia, especialista em tráfego pago, CRM, automação e crescimento previsível.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Framework**: Next.js 16 (App Router)
+- **Linguagem**: TypeScript (strict)
+- **Estilização**: Tailwind CSS v4 (CSS-first, tokens em `app/globals.css`)
+- **Animações**: Framer Motion (respeita `prefers-reduced-motion`)
+- **Ícones**: Lucide React
+- **Utilitários**: clsx + tailwind-merge (`lib/utils.ts`)
+
+## Estrutura
+
+```
+├── app/
+│   ├── globals.css          # Tokens de design (cores, fontes, utilitários)
+│   ├── layout.tsx           # Layout raiz, fonts (Inter + Space Grotesk)
+│   └── page.tsx             # Composição das seções
+├── components/
+│   ├── ui/                  # Componentes base reutilizáveis
+│   │   ├── button.tsx
+│   │   ├── section-heading.tsx
+│   │   ├── gradient-text.tsx
+│   │   ├── reveal.tsx
+│   │   └── glow-card.tsx
+│   ├── header.tsx
+│   ├── hero.tsx
+│   ├── problem-section.tsx
+│   ├── acquisition-system.tsx
+│   ├── services.tsx
+│   ├── case-studies.tsx
+│   ├── authority-section.tsx
+│   ├── process-section.tsx
+│   ├── contact-form.tsx
+│   └── footer.tsx
+├── data/
+│   └── site-content.ts      # TODO o conteúdo do site (tipado, em PT-BR)
+├── lib/
+│   └── utils.ts             # cn() — clsx + tailwind-merge
+└── public/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tokens de Design (globals.css)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+As variáveis CSS customizadas definem a paleta:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```css
+:root {
+  --color-bg: #05050A;
+  --color-bg2: #0C0B19;
+  --color-surface: #10101D;
+  --color-surface2: #121122;
+  --color-purple: #8B3DFF;
+  --color-violet: #A855F7;
+  --color-blue: #3B82F6;
+  --color-electric: #2563EB;
+  --color-magenta: #D946EF;
+  --color-fg: #F8FAFC;
+  --color-muted: #A1A1AA;
+  --color-success: #22C55E;
+}
+```
 
-## Learn More
+Utilitário `.text-gradient` aplica gradiente roxo→azul no texto.
 
-To learn more about Next.js, take a look at the following resources:
+## Desenvolvimento
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Instalar dependências
+npm install
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Rodar em desenvolvimento (Turbopack)
+npm run dev
 
-## Deploy on Vercel
+# Verificar tipos
+npx tsc --noEmit
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Build de produção
+npm run build
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Iniciar servidor de produção
+npm start
+```
+
+## Deploy na Vercel
+
+1. Conecte o repositório na Vercel
+2. Configure a variável de ambiente:
+   - `NEXT_PUBLIC_LEAD_WEBHOOK_URL` — URL do webhook para receber leads do formulário
+3. Deploy automático a cada push na branch principal
+
+## Variáveis de Ambiente
+
+| Variável | Obrigatória | Descrição |
+|----------|-------------|-----------|
+| `NEXT_PUBLIC_LEAD_WEBHOOK_URL` | Não* | Endpoint para POST do formulário de contato. Se ausente, simula sucesso em dev. |
+
+*Em produção, configure para receber leads reais.
+
+## Editando o Conteúdo
+
+Todo o texto, links, serviços, cases, métricas e FAQ ficam em **`data/site-content.ts`**.
+
+### Exemplo: alterar hero
+
+```typescript
+export const hero: HeroContent = {
+  label: "NOVO LABEL",
+  title: "Novo título principal.",
+  highlight: "trecho em gradiente",
+  subtitle: "Nova descrição...",
+  ctas: {
+    primary: { label: "CTA Principal", href: "#contato" },
+    secondary: { label: "CTA Secundário", href: "#resultados" },
+  },
+  indicators: ["Item 1", "Item 2"],
+  demoStats: [
+    { label: "Leads", value: "+200" }, // DEMONSTRATIVO
+    // ...
+  ],
+};
+```
+
+### Exemplo: adicionar serviço
+
+```typescript
+export const services: Service[] = [
+  // ...existentes
+  {
+    icon: "NewIcon", // nome do ícone em lucide-react
+    title: "Novo Serviço",
+    description: "Descrição curta do serviço.",
+  },
+];
+```
+
+### Exemplo: editar case study (placeholders)
+
+```typescript
+export const cases: CaseStudy[] = [
+  {
+    category: "Categoria",
+    title: "Título do Case",
+    challenge: "Desafio enfrentado",
+    solution: "Solução implementada",
+    mainMetric: "+XX leads", // PLACEHOLDER
+    secondaryMetrics: ["CPL de R$ XX", "ROAS de X,X"],
+    tags: ["Tag1", "Tag2"],
+    ctaLabel: "Ver detalhes do case",
+  },
+];
+```
+
+**Importante**: Os ícones usam nomes do `lucide-react` (ex: `"Zap"`, `"BarChart2"`, `"Target"`). O mapeamento é feito nos componentes.
+
+## Acessibilidade
+
+- Semântica HTML5 correta (`header`, `main`, `section`, `footer`, `nav`)
+- Landmarks ARIA (`role="banner"`, `role="contentinfo"`, `aria-labelledby`)
+- Foco visível em todos os elementos interativos
+- Labels associados aos inputs
+- `aria-invalid` + `aria-describedby` para erros de validação
+- `prefers-reduced-motion` respeitado em todas as animações
+- Contraste WCAG AA em modo dark
+
+## Performance
+
+- Componentes client-side apenas onde necessário (`"use client"`)
+- Imagens otimizadas via `next/image` (quando houver)
+- Fontes otimizadas com `next/font` (Inter + Space Grotesk)
+- Animações leves com `transform` e `opacity`
+- Build estático (SSG) por padrão
+
+## Qualidade
+
+```bash
+# TypeScript strict
+npx tsc --noEmit
+
+# ESLint
+npm run lint
+
+# Build completo
+npm run build
+```
+
+## Licença
+
+© 2026 Iuris Mídia. Todos os direitos reservados.
