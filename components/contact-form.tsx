@@ -19,6 +19,22 @@ function formatPhone(value: string): string {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
 }
 
+function getDigitsOnly(value: string): string {
+  return value.replace(/\D/g, "");
+}
+
+function getUTMParams(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  const params = new URLSearchParams(window.location.search);
+  return {
+    utm_source: params.get("utm_source") || "",
+    utm_medium: params.get("utm_medium") || "",
+    utm_campaign: params.get("utm_campaign") || "",
+    utm_term: params.get("utm_term") || "",
+    utm_content: params.get("utm_content") || "",
+  };
+}
+
 function validateField(name: string, value: string): string | null {
   switch (name) {
     case "name":
@@ -52,6 +68,8 @@ export default function ContactForm() {
     email: "",
     billing: "",
     message: "",
+    // Honeypot field (hidden from users, filled by bots)
+    website: "",
   });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [touched, setTouched] = React.useState<Record<string, boolean>>({});
@@ -75,56 +93,82 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    // Honeypot check: if filled, fake success without sending
+    if (formData.website) {
+      setSubmitStatus("success");
+      setSubmitMessage(contact.successMessage);
+      setFormData({ name: "", whatsapp: "", email: "", billing: "", message: "", website: "" });
+      setTouched({});
+      return;
+    }
+
     const newErrors: Record<string, string> = {};
     let hasErrors = false;
-    
+
     Object.keys(formData).forEach((key) => {
+      if (key === "website") return; // Skip honeypot validation
       const error = validateField(key, formData[key as keyof typeof formData]);
       if (error) {
         newErrors[key] = error;
         hasErrors = true;
       }
     });
-    
+
     setErrors(newErrors);
     setTouched(Object.keys(formData).reduce((acc, key) => ({ ...acc, [key]: true }), {}));
-    
+
     if (hasErrors) return;
 
     setIsSubmitting(true);
     setSubmitStatus("idle");
 
     try {
-      const webhookUrl = process.env.NEXT_PUBLIC_LEAD_WEBHOOK_URL;
-      
-      if (!webhookUrl) {
-        if (process.env.NODE_ENV === "development") {
-          console.warn("NEXT_PUBLIC_LEAD_WEBHOOK_URL não configurada. Simulando sucesso.");
-        }
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setSubmitStatus("success");
-        setSubmitMessage(contact.successMessage);
-        setFormData({ name: "", whatsapp: "", email: "", billing: "", message: "" });
-        setTouched({});
-        return;
-      }
+      const webhookUrl = process.env.NEXT_PUBLIC_LEAD_WEBHOOK_URL || contact.webhookUrl;
+
+      const whatsappDigits = getDigitsOnly(formData.whatsapp);
+      const whatsappWithDDI = whatsappDigits.startsWith("55") ? whatsappDigits : `55${whatsappDigits}`;
+
+      const payload = {
+        name: formData.name.trim(),
+        whatsapp: whatsappWithDDI,
+        whatsappFormatado: formData.whatsapp,
+        email: formData.email.trim().toLowerCase(),
+        billing: formData.billing,
+        message: formData.message.trim(),
+        origem: "site-iuris-midia",
+        pagina: typeof window !== "undefined" ? window.location.href : "",
+        referrer: typeof document !== "undefined" ? document.referrer : "",
+        ...getUTMParams(),
+        enviadoEm: new Date().toISOString(),
+      };
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       const response = await fetch(webhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
+        signal: controller.signal,
       });
 
-      if (!response.ok) throw new Error("Erro no envio");
-      
+      clearTimeout(timeoutId);
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
       setSubmitStatus("success");
       setSubmitMessage(contact.successMessage);
-      setFormData({ name: "", whatsapp: "", email: "", billing: "", message: "" });
+      setFormData({ name: "", whatsapp: "", email: "", billing: "", message: "", website: "" });
       setTouched({});
-    } catch {
-      setSubmitStatus("error");
-      setSubmitMessage(contact.errorMessage);
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        setSubmitStatus("error");
+        setSubmitMessage("Tempo de conexão esgotado. Tente novamente ou me chame direto no WhatsApp: https://wa.me/5514991314552");
+      } else {
+        setSubmitStatus("error");
+        setSubmitMessage(contact.errorMessage);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -141,7 +185,7 @@ export default function ContactForm() {
       <div className="absolute inset-0 bg-gradient-to-br from-[#5b21b6] via-[#4c3fd6] to-[#2563eb]" aria-hidden="true" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(255,255,255,0.22)_0%,_transparent_60%)]" aria-hidden="true" />
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.06]" aria-hidden="true" />
-      
+
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           <Reveal direction="up">
@@ -174,16 +218,29 @@ export default function ContactForm() {
                   </div>
                   <h3 className="text-2xl font-bold text-white mb-2">Solicitação enviada!</h3>
                   <p className="text-muted-foreground">{submitMessage}</p>
-<Button 
-                      variant="outline" 
-                      className="mt-6"
-                      onClick={() => setSubmitStatus("idle")}
-                    >
-                      Enviar outra solicitação
-                    </Button>
+                  <Button
+                    variant="outline"
+                    className="mt-6"
+                    onClick={() => setSubmitStatus("idle")}
+                  >
+                    Enviar outra solicitação
+                  </Button>
                 </motion.div>
               ) : (
                 <form onSubmit={handleSubmit} noValidate className="space-y-6" aria-label="Formulário de contato">
+                  {/* Honeypot field - invisible to users, filled by bots */}
+                  <input
+                    type="text"
+                    name="website"
+                    value={formData.website}
+                    onChange={(e) => handleChange("website", e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    style={{ display: "none" }}
+                    className="hidden"
+                  />
+
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-white mb-2">
                       {contact.fields.name.label}
@@ -365,15 +422,15 @@ export default function ContactForm() {
                     </motion.div>
                   )}
 
-<Button
-                      size="lg"
-                      className="w-full"
-                      isLoading={isSubmitting}
-                      disabled={isSubmitting}
-                      type="submit"
-                    >
-                      {isSubmitting ? "Enviando..." : contact.submitLabel}
-                    </Button>
+                  <Button
+                    size="lg"
+                    className="w-full"
+                    isLoading={isSubmitting}
+                    disabled={isSubmitting}
+                    type="submit"
+                  >
+                    {isSubmitting ? "Enviando..." : contact.submitLabel}
+                  </Button>
                 </form>
               )}
             </GlowCard>

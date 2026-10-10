@@ -87,17 +87,19 @@ npm start
 ## Deploy na Vercel
 
 1. Conecte o repositório na Vercel
-2. Configure a variável de ambiente:
-   - `NEXT_PUBLIC_LEAD_WEBHOOK_URL` — URL do webhook para receber leads do formulário
-3. Deploy automático a cada push na branch principal
+2. Configure a variável de ambiente em **Settings > Environment Variables** (marque **Production**):
+   - `NEXT_PUBLIC_LEAD_WEBHOOK_URL` = `https://n8n.globalportfolio.com.br/webhook/portfolio`
+   - ⚠️ Como é `NEXT_PUBLIC_`, o valor é embutido no build — após alterar, faça **redeploy**.
+3. No n8n: o nó Webhook deve ter método **POST**, workflow **publicado/ativo**, e em **Options > Allowed Origins (CORS)** adicione o domínio do site (ex.: `https://seudominio.com.br`).
+4. Deploy automático a cada push na branch principal.
 
 ## Variáveis de Ambiente
 
 | Variável | Obrigatória | Descrição |
 |----------|-------------|-----------|
-| `NEXT_PUBLIC_LEAD_WEBHOOK_URL` | Não* | Endpoint para POST do formulário de contato. Se ausente, simula sucesso em dev. |
+| `NEXT_PUBLIC_LEAD_WEBHOOK_URL` | Sim (produção) | Endpoint POST do n8n para receber leads. Em dev, pode apontar para servidor local de teste. Veja `.env.example`. |
 
-*Em produção, configure para receber leads reais.
+Para testar localmente sem enviar para produção, suba um servidor descartável (ex.: `npx http-server` ou Node) e aponte `NEXT_PUBLIC_LEAD_WEBHOOK_URL=http://localhost:PORTA/webhook` no `.env.local`.
 
 ## Editando o Conteúdo
 
@@ -148,7 +150,6 @@ export const cases: CaseStudy[] = [
     mainMetric: "+XX leads", // PLACEHOLDER
     secondaryMetrics: ["CPL de R$ XX", "ROAS de X,X"],
     tags: ["Tag1", "Tag2"],
-    ctaLabel: "Ver detalhes do case",
   },
 ];
 ```

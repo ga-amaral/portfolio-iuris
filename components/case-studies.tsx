@@ -4,14 +4,12 @@ import * as React from "react";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal, RevealItem } from "@/components/ui/reveal";
 import { GlowCard } from "@/components/ui/glow-card";
-import { Button } from "@/components/ui/button";
 import { cases } from "@/data/site-content";
 import {
   Building2,
   HeartPulse,
   ShoppingCart,
   Briefcase,
-  ArrowRight,
   CheckCircle2,
   Calendar,
   MessageSquare,
@@ -43,17 +41,17 @@ function LawFirmMockup() {
           </span>
         </div>
         <span className="rounded bg-purple-500/20 px-2 py-0.5 font-mono text-[9px] text-purple-200">
-          Qualificação 84%
+          Qualificação 74%
         </span>
       </div>
 
-      {/* 3-Column Kanban */}
-      <div className="grid grid-cols-3 gap-2">
-        {/* Col 1 */}
+      {/* 4-Column Kanban (proporcional aos dados: 1762 leads → 1300 qualif → 924 reuniões → 200 fechados ≈ 9:6.5:4.5:1) */}
+      <div className="grid grid-cols-4 gap-2">
+        {/* Col 1: Novos Leads */}
         <div className="rounded-lg border border-white/[0.05] bg-[#121122]/70 p-2">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-semibold text-zinc-400">Novos</span>
-            <span className="rounded bg-white/10 px-1 text-[9px] text-zinc-300">12</span>
+            <span className="text-[10px] font-semibold text-zinc-400">Novos Leads</span>
+            <span className="rounded bg-white/10 px-1.5 text-[9px] text-zinc-300">1.762</span>
           </div>
           <div className="space-y-1.5">
             <div className="rounded border border-purple-500/20 bg-[#16152b] p-1.5 shadow-sm">
@@ -70,11 +68,11 @@ function LawFirmMockup() {
           </div>
         </div>
 
-        {/* Col 2 */}
+        {/* Col 2: Qualificados */}
         <div className="rounded-lg border border-purple-500/30 bg-[#121122]/80 p-2">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-semibold text-purple-300">Qualificados</span>
-            <span className="rounded bg-purple-500/20 px-1 text-[9px] text-purple-200">6</span>
+            <span className="rounded bg-purple-500/20 px-1.5 text-[9px] text-purple-200">1.300</span>
           </div>
           <div className="space-y-1.5">
             <div className="rounded border border-purple-500/40 bg-purple-500/10 p-1.5 shadow-sm">
@@ -90,18 +88,35 @@ function LawFirmMockup() {
           </div>
         </div>
 
-        {/* Col 3 */}
+        {/* Col 3: Reuniões Agendadas */}
+        <div className="rounded-lg border border-blue-500/30 bg-[#121122]/70 p-2">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-semibold text-blue-300">Reuniões</span>
+            <span className="rounded bg-blue-500/20 px-1.5 text-[9px] text-blue-200">924</span>
+          </div>
+          <div className="space-y-1.5">
+            <div className="rounded border border-blue-500/30 bg-blue-500/10 p-1.5">
+              <p className="font-medium text-white truncate text-[11px]">Dr. Associado</p>
+              <div className="mt-1 flex items-center justify-between text-[9px] text-blue-300">
+                <span>Agendado</span>
+                <span>Hoje 15h</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Col 4: Contratos Fechados */}
         <div className="rounded-lg border border-emerald-500/30 bg-[#121122]/70 p-2">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-semibold text-emerald-400">Reunião</span>
-            <span className="rounded bg-emerald-500/20 px-1 text-[9px] text-emerald-300">5</span>
+            <span className="text-[10px] font-semibold text-emerald-400">Fechados</span>
+            <span className="rounded bg-emerald-500/20 px-1.5 text-[9px] text-emerald-300">200</span>
           </div>
           <div className="space-y-1.5">
             <div className="rounded border border-emerald-500/30 bg-emerald-500/10 p-1.5">
-              <p className="font-medium text-white truncate text-[11px]">Dr. Associado</p>
+              <p className="font-medium text-white truncate text-[11px]">Contrato 200</p>
               <div className="mt-1 flex items-center justify-between text-[9px] text-emerald-300">
-                <span>Agendado</span>
-                <span>Hoje 15h</span>
+                <span>Assinado</span>
+                <span>R$ 6.000</span>
               </div>
             </div>
           </div>
@@ -113,7 +128,7 @@ function LawFirmMockup() {
         <span className="flex items-center gap-1">
           <Zap size={11} className="text-purple-400" /> Follow-up automatizado
         </span>
-        <span className="font-mono text-emerald-400">Tempo de resposta: 42s</span>
+        <span className="font-mono text-emerald-400">Ticket médio: R$ 6 mil</span>
       </div>
     </div>
   );
@@ -134,8 +149,24 @@ function ClinicMockup() {
           </span>
         </div>
         <span className="rounded bg-emerald-500/20 px-2 py-0.5 font-mono text-[9px] text-emerald-300">
-          No-show -65%
+          78% comparecimento
         </span>
+      </div>
+
+      {/* Metrics Dashboard */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+        <div className="rounded border border-white/[0.05] bg-[#121122]/70 p-2 text-center">
+          <p className="font-mono text-white text-lg">+86</p>
+          <p className="text-[9px] text-zinc-400 mt-0.5">Agendamentos/mês</p>
+        </div>
+        <div className="rounded border border-white/[0.05] bg-[#121122]/70 p-2 text-center">
+          <p className="font-mono text-white text-lg">R$ 32,90</p>
+          <p className="text-[9px] text-zinc-400 mt-0.5">CPL</p>
+        </div>
+        <div className="rounded border border-emerald-500/30 bg-emerald-500/10 p-2 text-center">
+          <p className="font-mono text-emerald-300 text-lg">5,1x</p>
+          <p className="text-[9px] text-emerald-300 mt-0.5">ROAS</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -143,7 +174,7 @@ function ClinicMockup() {
         <div className="space-y-1.5 rounded-lg border border-white/[0.06] bg-[#121122]/70 p-2">
           <div className="flex items-center justify-between text-[10px] text-zinc-400 mb-1">
             <span className="font-semibold text-zinc-300">Consultas de Hoje</span>
-            <span className="text-purple-300">92% Ocupada</span>
+            <span className="text-purple-300">78% ocupação</span>
           </div>
 
           <div className="flex items-center justify-between rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-1">
@@ -181,19 +212,19 @@ function ClinicMockup() {
           <div className="space-y-1.5 text-[10px]">
             <div className="rounded-md bg-[#1d1b33] p-1.5 text-zinc-300">
               <p className="text-[9px] leading-tight">
-                &quot;Olá Mariana! Sua consulta está confirmada para hoje às 11:30. Deseja rota?&quot;
+                &ldquo;Olá Mariana! Sua consulta está confirmada para hoje às 11:30. Deseja rota?&rdquo;
               </p>
             </div>
             <div className="rounded-md bg-emerald-950/60 border border-emerald-500/30 p-1.5 text-right text-emerald-200">
               <p className="text-[9px] leading-tight font-medium">
-                &quot;Sim, já estou a caminho! ✓✓&quot;
+                &ldquo;Sim, já estou a caminho! ✓✓&rdquo;
               </p>
             </div>
           </div>
 
           <div className="mt-1 text-[9px] text-zinc-400 flex items-center justify-between pt-1 border-t border-white/[0.05]">
             <span>Google Ads → Form → Bot</span>
-            <span className="text-emerald-400 font-medium">Presença garantida</span>
+            <span className="text-emerald-400 font-medium">78% comparecimento</span>
           </div>
         </div>
       </div>
@@ -308,8 +339,32 @@ function ServicesCompanyMockup() {
           </span>
         </div>
         <span className="rounded bg-emerald-500/20 px-2 py-0.5 font-mono text-[9px] text-emerald-300">
-          Conv: 22.8%
+          2 contratos fechados
         </span>
+      </div>
+
+      {/* Metrics Dashboard */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-3">
+        <div className="rounded border border-white/[0.05] bg-[#121122]/70 p-2 text-center">
+          <p className="font-mono text-white text-lg">1.457</p>
+          <p className="text-[9px] text-zinc-400 mt-0.5">Cliques</p>
+        </div>
+        <div className="rounded border border-white/[0.05] bg-[#121122]/70 p-2 text-center">
+          <p className="font-mono text-white text-lg">13.573</p>
+          <p className="text-[9px] text-zinc-400 mt-0.5">Impressões</p>
+        </div>
+        <div className="rounded border border-white/[0.05] bg-[#121122]/70 p-2 text-center">
+          <p className="font-mono text-white text-lg">R$ 0,47</p>
+          <p className="text-[9px] text-zinc-400 mt-0.5">CPC médio</p>
+        </div>
+        <div className="rounded border border-white/[0.05] bg-[#121122]/70 p-2 text-center">
+          <p className="font-mono text-white text-lg">R$ 683,62</p>
+          <p className="text-[9px] text-zinc-400 mt-0.5">Custo total</p>
+        </div>
+        <div className="rounded border border-emerald-500/30 bg-emerald-500/10 p-2 text-center">
+          <p className="font-mono text-emerald-300 text-lg">2</p>
+          <p className="text-[9px] text-emerald-300 mt-0.5">Contratos</p>
+        </div>
       </div>
 
       {/* Mini LP Wireframe */}
@@ -343,13 +398,13 @@ function ServicesCompanyMockup() {
         <div className="text-[10px] text-zinc-400 mb-1.5 font-semibold">
           Fluxo Conectado de Captação
         </div>
-        <div className="flex items-center justify-between text-[9px]">
+        <div className="flex items-center justify-between text-[9px] flex-wrap gap-1">
           <span className="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-zinc-300">
-            Anúncio
+            Anúncio (13.573 imp.)
           </span>
           <span className="text-purple-400">→</span>
           <span className="rounded border border-purple-500/30 bg-purple-500/20 px-1.5 py-0.5 text-purple-200 font-semibold">
-            LP Conversão
+            LP Conversão (1.457 cliques)
           </span>
           <span className="text-purple-400">→</span>
           <span className="rounded border border-blue-500/30 bg-blue-500/20 px-1.5 py-0.5 text-blue-200">
@@ -357,7 +412,7 @@ function ServicesCompanyMockup() {
           </span>
           <span className="text-purple-400">→</span>
           <span className="rounded border border-emerald-500/30 bg-emerald-500/20 px-1.5 py-0.5 text-emerald-300 font-semibold">
-            Venda Fechada
+            2 Contratos Fechados
           </span>
         </div>
       </div>
@@ -479,12 +534,6 @@ export default function CaseStudies() {
                         {renderCaseMockup(caseStudy.category)}
                       </div>
                     </div>
-
-                    {/* Action Button */}
-                    <Button variant="outline" className="w-full justify-center gap-2 mt-2">
-                      {caseStudy.ctaLabel}
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
                   </GlowCard>
                 </RevealItem>
               );

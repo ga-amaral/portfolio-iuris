@@ -65,7 +65,6 @@ export interface CaseStudy {
   mainMetric: string;
   secondaryMetrics: string[];
   tags: string[];
-  ctaLabel: string;
 }
 
 export interface AuthorityContent {
@@ -99,6 +98,7 @@ export interface ContactForm {
   submitLabel: string;
   successMessage: string;
   errorMessage: string;
+  webhookUrl: string;
 }
 
 export interface FooterContent {
@@ -279,40 +279,36 @@ export const cases: CaseStudy[] = [
     title: "Leads qualificados e CRM organizado",
     challenge: "Recebia leads desqualificados do tráfego e não tinha processo comercial estruturado.",
     solution: "Estrutura completa: Meta Ads + landing page + CRM Kanban + automação de qualificação e agendamento.",
-    mainMetric: "+XX leads qualificados/mês", // PLACEHOLDER
-    secondaryMetrics: ["CPL de R$ XX", "+XX% em reuniões agendadas", "ROAS de X,X"],
+    mainMetric: "200 contratos fechados",
+    secondaryMetrics: ["1.762 leads", "1.300 leads qualificados", "924 reuniões", "Ticket médio de R$ 6 mil"],
     tags: ["Meta Ads", "CRM", "Automação", "Qualificação"],
-    ctaLabel: "Ver detalhes do case",
   },
   {
     category: "Clínica",
     title: "Captação e agendamento automatizado",
     challenge: "Dependia de indicação e WhatsApp manual; agenda ociosa e leads perdidos.",
     solution: "Google Ads + Meta Ads para captação, landing page de agendamento, CRM com etapas de funil, automação de confirmação e lembrete.",
-    mainMetric: "+XX agendamentos/mês", // PLACEHOLDER
-    secondaryMetrics: ["CPL de R$ XX", "Taxa de comparecimento XX%", "ROAS de X,X"],
+    mainMetric: "+86 agendamentos/mês",
+    secondaryMetrics: ["CPL de R$ 32,90", "Taxa de comparecimento 78%", "ROAS de 5,1x"],
     tags: ["Google Ads", "Meta Ads", "Agendamento", "Automação"],
-    ctaLabel: "Ver detalhes do case",
   },
   {
     category: "E-commerce",
     title: "Performance e ROAS escalável",
     challenge: "ROAS instável, dependência de poucas campanhas, tracking incompleto.",
     solution: "Estrutura de funil completo: Google Shopping + Search + Meta Ads, CAPI + GA4 + GTM, dashboards de produto e funil, otimização semanal.",
-    mainMetric: "ROAS de X,X", // PLACEHOLDER
-    secondaryMetrics: ["+XX% receita", "CPL de R$ XX", "Ticket médio R$ XXX"],
+    mainMetric: "ROAS de 4,8x",
+    secondaryMetrics: ["+148% receita", "CPL de R$ 18,90", "Ticket médio de R$ 229"],
     tags: ["Google Ads", "Meta Ads", "Tracking", "Dashboards"],
-    ctaLabel: "Ver detalhes do case",
   },
   {
     category: "Empresa de serviços",
     title: "Landing page, tráfego e automação integrados",
     challenge: "Site institucional não convertia; tráfego direcionado para página genérica.",
     solution: "Landing page de conversão + Meta Ads + Google Ads + CRM + automação de follow-up via WhatsApp e e-mail + dashboard unificado.",
-    mainMetric: "+XX leads/mês", // PLACEHOLDER
-    secondaryMetrics: ["CPL de R$ XX", "+XX% taxa de contato", "ROAS de X,X"],
+    mainMetric: "2 contratos fechados",
+    secondaryMetrics: ["1.457 cliques", "13.573 impressões", "CPC médio de R$ 0,47", "Custo de R$ 683,62", "Ticket médio de R$ 2 mil"],
     tags: ["Landing Page", "Meta Ads", "Google Ads", "CRM", "Automação"],
-    ctaLabel: "Ver detalhes do case",
   },
 ];
 
@@ -400,6 +396,7 @@ export const contact: ContactForm = {
   submitLabel: "Solicitar análise",
   successMessage: "Recebi sua solicitação. Entrarei em contato em até 1 dia útil.",
   errorMessage: "Ocorreu um erro ao enviar. Tente novamente ou me chame direto no WhatsApp: https://wa.me/5514991314552",
+  webhookUrl: "https://n8n.globalportfolio.com.br/webhook/portfolio",
 };
 
 export const footer: FooterContent = {
